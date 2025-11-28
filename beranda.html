@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Beranda — Penghitung Honor</title>
+  <link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+  <header class="topnav">
+    <div class="brand">Penghitung Honor — SMP IT</div>
+    <nav>
+      <a href="beranda.html">Beranda</a>
+      <a href="input-data.html">Input Data</a>
+      <a href="input-honor.html">Input Honor</a>
+      <a href="rekap-bulanan.html">Rekap Bulanan</a>
+      <a href="rekap-tahunan.html">Rekap Tahunan</a>
+      <a href="#" id="logout">Logout</a>
+    </nav>
+  </header>
+
+  <main class="container">
+    <section class="card">
+      <h3>Ringkasan</h3>
+      <div class="grid-3">
+        <div class="stat card">
+          <div class="stat-title">Jumlah Guru</div>
+          <div id="statGuru" class="stat-value">0</div>
+        </div>
+        <div class="stat card">
+          <div class="stat-title">Entri Bulan Ini</div>
+          <div id="statEntri" class="stat-value">0</div>
+        </div>
+        <div class="stat card">
+          <div class="stat-title">Perkiraan Pengeluaran (Bulan Ini)</div>
+          <div id="statTotal" class="stat-value">Rp 0</div>
+        </div>
+      </div>
+    </section>
+
+    <section class="card">
+      <h3>Quick Links</h3>
+      <div class="quick">
+        <a class="btn" href="input-data.html">Input Data Guru</a>
+        <a class="btn primary" href="input-honor.html">Input Honor</a>
+        <a class="btn" href="rekap-bulanan.html">Lihat Rekap Bulanan</a>
+      </div>
+    </section>
+  </main>
+
+  <script src="assets/app.js"></script>
+  <script>
+    // init dashboard values
+    (function(){
+      if(!checkAuth()) location.href='index.html';
+      document.getElementById('logout').onclick = () => { localStorage.removeItem('honor_current'); location.href='index.html'; }
+      const {countGurus, countEntriesMonth, estimateTotalMonth} = window.HONOR
+      document.getElementById('statGuru').textContent = countGurus()
+      document.getElementById('statEntri').textContent = countEntriesMonth()
+      document.getElementById('statTotal').textContent = formatMoney(estimateTotalMonth())
+    })();
+  </script>
+</body>
+</html>
