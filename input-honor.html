@@ -1,0 +1,129 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Input Honor</title>
+  <link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+  <header class="topnav">
+    <div class="brand">Penghitung Honor</div>
+    <nav>
+      <a href="beranda.html">Beranda</a>
+      <a href="input-data.html">Input Data</a>
+      <a href="input-honor.html">Input Honor</a>
+      <a href="rekap-bulanan.html">Rekap Bulanan</a>
+      <a href="rekap-tahunan.html">Rekap Tahunan</a>
+      <a href="#" id="logout">Logout</a>
+    </nav>
+  </header>
+
+  <main class="container">
+    <section class="card">
+      <h3>Input Honor — Entri Harian</h3>
+      <div class="form-row">
+        <select id="selGuru"></select>
+        <select id="selMapel"></select>
+        <input id="selBulan" type="month" />
+      </div>
+      <div class="small">Pilih tanggal pada kalender di bawah lalu isi JP; tanggal dengan JP akan berwarna hijau.</div>
+
+      <div id="calendarWrap" class="card" style="margin-top:12px"></div>
+
+      <div class="card" style="margin-top:8px">
+        <h4>Rincian Entri</h4>
+        <div class="form-row">
+          <input id="inpTanggal" type="date" />
+          <input id="inpJP" type="number" placeholder="Jumlah JP" />
+        </div>
+        <div class="form-row">
+          <input id="inpHonorJabatan" type="number" placeholder="Honor jabatan (Rp)" />
+          <input id="inpHonorTransport" type="number" placeholder="Honor transport (Rp / kehadiran)" />
+        </div>
+        <div class="form-row">
+          <input id="kegiatanNama" placeholder="Nama kegiatan (opsional)" />
+          <input id="kegiatanNominal" type="number" placeholder="Nominal kegiatan (Rp)" />
+        </div>
+        <div class="form-row">
+          <button id="btnTambahKegiatan" class="btn">Tambah Kegiatan</button>
+          <button id="btnHitung" class="btn primary">Hitung Total & Simpan</button>
+        </div>
+        <div id="kegiatanList" class="small"></div>
+      </div>
+    </section>
+  </main>
+
+  <script src="assets/app.js"></script>
+  <script>
+    (function(){
+      if(!checkAuth()) location.href='index.html';
+      document.getElementById('logout').onclick = () => { localStorage.removeItem('honor_current'); location.href='index.html'; }
+
+      const { populateGuruOptions, buildCalendarForMonth, addHonorEntry } = window.HONOR
+      populateGuruOptions('selGuru','selMapel')
+      // default month = now
+      document.getElementById('selBulan').value = new Date().toISOString().slice(0,7)
+      function refreshCal(){ buildCalendarForMonth(document.getElementById('selBulan').value, 'calendarWrap') }
+      document.getElementById('selBulan').onchange = refreshCal
+      document.getElementById('selGuru').onchange = () => {
+        // set mapel selected or rebuild mapel list
+        populateGuruOptions('selGuru','selMapel')
+      }
+      refreshCal()
+
+      // calendar click will set date input
+      document.getElementById('calendarWrap').addEventListener('click', e=>{
+        if(e.target.dataset.date) {
+          document.getElementById('inpTanggal').value = e.target.dataset.date
+          // focus JP
+          document.getElementById('inpJP').focus()
+        }
+      })
+
+      let kegiatanArr = []
+      document.getElementById('btnTambahKegiatan').onclick = ()=>{
+        const n = document.getElementById('kegiatanNama').value.trim()
+        const v = Number(document.getElementById('kegiatanNominal').value||0)
+        if(!n) return alert('Nama kegiatan kosong')
+        kegiatanArr.push({nama:n,nominal:v})
+        document.getElementById('kegiatanNama').value=''; document.getElementById('kegiatanNominal').value=''
+        renderKegiatan()
+      }
+      function renderKegiatan(){
+        const list = kegiatanArr.map((k,i)=>`<div>${k.nama} — ${formatMoney(k.nominal)} <button data-i="${i}" class="btn small">Hapus</button></div>`).join('')
+        document.getElementById('kegiatanList').innerHTML = list || '<em>Tidak ada kegiatan</em>'
+      }
+      document.getElementById('kegiatanList').addEventListener('click', e=>{
+        if(e.target.dataset.i) {
+          kegiatanArr.splice(Number(e.target.dataset.i),1); renderKegiatan()
+        }
+      })
+
+      document.getElementById('btnHitung').onclick = ()=>{
+        const guruIdx = document.getElementById('selGuru').value
+        if(guruIdx==='') return alert('Pilih guru')
+        const guruId = document.getElementById('selGuru').dataset.ids ? document.getElementById('selGuru').dataset.ids.split(',')[guruIdx] : document.getElementById('selGuru').value
+        const mapel = document.getElementById('selMapel').value
+        const monthVal = document.getElementById('selBulan').value
+        const tanggal = document.getElementById('inpTanggal').value
+        const jp = Number(document.getElementById('inpJP').value||0)
+        const honorJabatan = Number(document.getElementById('inpHonorJabatan').value||0)
+        const honorTransport = Number(document.getElementById('inpHonorTransport').value||0)
+        addHonorEntry({
+          guruIndex: document.getElementById('selGuru').value,
+          guruId,
+          mapel,
+          month: monthVal,
+          date: tanggal,
+          jp,
+          honorJabatan,
+          honorTransport,
+          kegiatan: kegiatanArr
+        })
+        kegiatanArr = []; renderKegiatan(); refreshCal()
+      }
+    })();
+  </script>
+</body>
+</html>
