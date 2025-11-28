@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Rekap Bulanan</title>
+  <link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+  <header class="topnav">
+    <div class="brand">Penghitung Honor</div>
+    <nav>
+      <a href="beranda.html">Beranda</a>
+      <a href="input-data.html">Input Data</a>
+      <a href="input-honor.html">Input Honor</a>
+      <a href="rekap-bulanan.html">Rekap Bulanan</a>
+      <a href="rekap-tahunan.html">Rekap Tahunan</a>
+      <a href="#" id="logout">Logout</a>
+    </nav>
+  </header>
+
+  <main class="container">
+    <section class="card">
+      <h3>Rekap Bulanan</h3>
+      <div class="form-row">
+        <input id="monthSel" type="month" />
+        <button id="btnShow" class="btn primary">Tampilkan</button>
+        <button id="btnExportPDF" class="btn">Download PDF (Total Bulan)</button>
+      </div>
+      <div id="rekapResult" style="margin-top:12px"></div>
+    </section>
+  </main>
+
+  <script src="assets/app.js"></script>
+  <script>
+    (function(){
+      if(!checkAuth()) location.href='index.html';
+      document.getElementById('logout').onclick = () => { localStorage.removeItem('honor_current'); location.href='index.html'; }
+      document.getElementById('monthSel').value = new Date().toISOString().slice(0,7)
+      document.getElementById('btnShow').onclick = ()=> {
+        const m = document.getElementById('monthSel').value
+        if(!m) return alert('Pilih bulan')
+        const html = window.HONOR.renderRekapBulanan(m)
+        document.getElementById('rekapResult').innerHTML = html
+        // bind actions inside result (edit/delete/nota)
+        document.getElementById('rekapResult').querySelectorAll('[data-action]').forEach(btn=>{
+          btn.onclick = (e)=>{
+            const action = btn.dataset.action; const idx = btn.dataset.idx
+            if(action==='nota') { window.location.href = 'nota.html?entry='+idx+'&m='+m }
+            if(action==='del') { if(confirm('Hapus entri ini?')) { window.HONOR.deleteEntryByIndex(idx); document.getElementById('btnShow').click() } }
+            if(action==='edit') { window.HONOR.editEntryByIndexPrompt(idx); document.getElementById('btnShow').click() }
+          }
+        })
+      }
+      document.getElementById('btnExportPDF').onclick = async ()=>{
+        const month = document.getElementById('monthSel').value
+        if(!month) return alert('Pilih bulan terlebih dahulu')
+        await window.HONOR.exportPDFMonth(month)
+      }
+    })();
+  </script>
+</body>
+</html>
