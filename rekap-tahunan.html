@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Rekap Tahunan</title>
+  <link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+  <header class="topnav">
+    <div class="brand">Penghitung Honor</div>
+    <nav>
+      <a href="beranda.html">Beranda</a>
+      <a href="input-data.html">Input Data</a>
+      <a href="input-honor.html">Input Honor</a>
+      <a href="rekap-bulanan.html">Rekap Bulanan</a>
+      <a href="rekap-tahunan.html">Rekap Tahunan</a>
+      <a href="#" id="logout">Logout</a>
+    </nav>
+  </header>
+
+  <main class="container">
+    <section class="card">
+      <h3>Rekap Tahunan</h3>
+      <div class="form-row">
+        <input id="yearSel" type="number" min="2000" max="2100" value="" />
+        <button id="btnShowYear" class="btn primary">Tampilkan</button>
+        <button id="btnExportYearPDF" class="btn">Download PDF Tahunan</button>
+      </div>
+      <div id="rekapYearResult" style="margin-top:12px"></div>
+    </section>
+  </main>
+
+  <script src="assets/app.js"></script>
+  <script>
+    (function(){
+      if(!checkAuth()) location.href='index.html';
+      document.getElementById('logout').onclick = () => { localStorage.removeItem('honor_current'); location.href='index.html'; }
+      document.getElementById('yearSel').value = new Date().getFullYear()
+      document.getElementById('btnShowYear').onclick = ()=> {
+        const y = Number(document.getElementById('yearSel').value)
+        document.getElementById('rekapYearResult').innerHTML = window.HONOR.renderRekapTahunan(y)
+      }
+      document.getElementById('btnExportYearPDF').onclick = ()=> {
+        const y = Number(document.getElementById('yearSel').value)
+        window.HONOR.exportPDFYear(y)
+      }
+    })();
+  </script>
+</body>
+</html>
