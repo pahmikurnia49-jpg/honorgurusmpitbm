@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Input Data Guru</title>
+  <link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+  <header class="topnav">
+    <div class="brand">Penghitung Honor</div>
+    <nav>
+      <a href="beranda.html">Beranda</a>
+      <a href="input-data.html">Input Data</a>
+      <a href="input-honor.html">Input Honor</a>
+      <a href="rekap-bulanan.html">Rekap Bulanan</a>
+      <a href="rekap-tahunan.html">Rekap Tahunan</a>
+      <a href="#" id="logout">Logout</a>
+    </nav>
+  </header>
+
+  <main class="container">
+    <section class="card">
+      <h3>Tambah/Edit Guru</h3>
+      <div class="form-row">
+        <input id="g_nama" placeholder="Nama guru" />
+        <input id="g_mapel" placeholder="Mata pelajaran" />
+        <input id="g_jabatan" placeholder="Jabatan" />
+      </div>
+      <div class="form-row">
+        <input id="g_honorPokok" type="number" placeholder="Honor pokok (Rp)" />
+        <input id="g_honorTransport" type="number" placeholder="Honor transport (Rp / kehadiran)" />
+      </div>
+      <div class="form-row">
+        <button id="btnAddGuru" class="btn primary">Simpan Guru</button>
+        <button id="btnExportGurus" class="btn">Export JSON</button>
+      </div>
+    </section>
+
+    <section class="card">
+      <h3>Daftar Guru</h3>
+      <table id="tblGurus">
+        <thead><tr><th>Nama</th><th>Mapel</th><th>Jabatan</th><th>Honor Pokok</th><th>Transport</th><th>Aksi</th></tr></thead>
+        <tbody></tbody>
+      </table>
+    </section>
+  </main>
+
+  <script src="assets/app.js"></script>
+  <script>
+    (function(){
+      if(!checkAuth()) location.href='index.html';
+      document.getElementById('logout').onclick = () => { localStorage.removeItem('honor_current'); location.href='index.html'; }
+
+      const { addGuru, renderGurus, exportGurus } = window.HONOR
+      renderGurus()
+      document.getElementById('btnAddGuru').onclick = () => {
+        const nama = document.getElementById('g_nama').value.trim()
+        const mapel = document.getElementById('g_mapel').value.trim()
+        const jabatan = document.getElementById('g_jabatan').value.trim()
+        const pokok = Number(document.getElementById('g_honorPokok').value||0)
+        const transport = Number(document.getElementById('g_honorTransport').value||0)
+        if(!nama) return alert('Nama kosong')
+        addGuru({nama,mapel,jabatan,honorPokok:pokok,honorTransport:transport})
+        renderGurus()
+        alert('Guru tersimpan')
+        // clear
+        document.getElementById('g_nama').value=''; document.getElementById('g_mapel').value=''; document.getElementById('g_jabatan').value=''; document.getElementById('g_honorPokok').value=''; document.getElementById('g_honorTransport').value=''
+      }
+      document.getElementById('btnExportGurus').onclick = () => exportGurus()
+    })();
+  </script>
+</body>
+</html>
