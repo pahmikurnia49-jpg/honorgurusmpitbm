@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Nota — Penghitung Honor</title>
+  <link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+  <header class="topnav">
+    <div class="brand">Penghitung Honor</div>
+    <nav>
+      <a href="beranda.html">Beranda</a>
+      <a href="input-data.html">Input Data</a>
+      <a href="input-honor.html">Input Honor</a>
+      <a href="rekap-bulanan.html">Rekap Bulanan</a>
+      <a href="rekap-tahunan.html">Rekap Tahunan</a>
+      <a href="#" id="logout">Logout</a>
+    </nav>
+  </header>
+
+  <main class="container">
+    <section class="card">
+      <div id="notaArea"></div>
+      <div style="margin-top:8px">
+        <button id="btnDownloadPDF" class="btn primary">Download PDF</button>
+        <button id="btnDownloadWord" class="btn">Download Word</button>
+      </div>
+    </section>
+  </main>
+
+  <script src="assets/app.js"></script>
+  <script>
+    (function(){
+      if(!checkAuth()) location.href='index.html';
+      const params = new URLSearchParams(location.search)
+      const entryIdx = params.get('entry')
+      const month = params.get('m')
+      if(!entryIdx || !month) {
+        document.getElementById('notaArea').innerHTML = '<em>Tidak ada entry yang dipilih.</em>'; return;
+      }
+      const noteHtml = window.HONOR.renderNotaByIndex(entryIdx)
+      document.getElementById('notaArea').innerHTML = noteHtml
+      document.getElementById('btnDownloadPDF').onclick = ()=> window.HONOR.printHtmlToPDF(noteHtml, 'nota-'+entryIdx)
+      document.getElementById('btnDownloadWord').onclick = ()=> window.HONOR.downloadHtmlAsWord(noteHtml, 'nota-'+entryIdx+'.doc')
+    })();
+  </script>
+</body>
+</html>
