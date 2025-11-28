@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Login — Penghitung Honor</title>
+  <link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+  <main class="page card center">
+    <h2>Login — Penghitung Honor</h2>
+    <div class="form-row">
+      <input id="username" placeholder="Username" />
+      <input id="password" type="password" placeholder="Password" />
+    </div>
+    <div class="form-row">
+      <button id="btnLogin" class="btn primary">Login</button>
+    </div>
+    <p class="small">Default: <b>admin</b> / <b>admin</b></p>
+  </main>
+
+  <script src="assets/app.js"></script>
+  <script>
+    // simple login logic, redirect to beranda on success
+    document.getElementById('btnLogin').onclick = () => {
+      const u = document.getElementById('username').value || 'admin';
+      const p = document.getElementById('password').value || 'admin';
+      const users = JSON.parse(localStorage.getItem('honor_users')||'{}');
+      // initialize default user if empty
+      if(Object.keys(users).length === 0) {
+        localStorage.setItem('honor_users', JSON.stringify({admin:'admin'}));
+      }
+      const us = JSON.parse(localStorage.getItem('honor_users'));
+      if(us[u] && us[u] === p) {
+        localStorage.setItem('honor_current', u);
+        location.href = 'beranda.html';
+      } else {
+        alert('Login gagal — cek username/password');
+      }
+    }
+  </script>
+</body>
+</html>
