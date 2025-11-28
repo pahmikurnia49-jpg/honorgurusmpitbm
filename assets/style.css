@@ -1,0 +1,21 @@
+:root{--blue:#0b69ff;--yellow:#ffd600;--white:#ffffff;--muted:#6b7c93}
+*{box-sizing:border-box}
+body{font-family:Inter,system-ui,Arial; margin:0;background:#f4f8ff;color:#073b6a}
+.topnav{background:linear-gradient(90deg,var(--blue),#4ca3ff);color:#fff;padding:12px 18px;display:flex;align-items:center;justify-content:space-between}
+.topnav .brand{font-weight:700}
+.topnav nav a{color:#fff;margin-left:12px;text-decoration:none}
+.container{max-width:1100px;margin:18px auto;padding:12px}
+.card{background:#fff;border-radius:8px;padding:12px;box-shadow:0 6px 18px rgba(10,30,60,0.06);margin-bottom:12px}
+.form-row{display:flex;gap:8px;margin-top:8px}
+.form-row input, .form-row select{flex:1;padding:8px;border:1px solid #dfefff;border-radius:6px}
+.btn{padding:8px 12px;border-radius:8px;border:none;background:#e6f2ff;color:#073b6a;cursor:pointer}
+.btn.primary{background:var(--blue);color:#fff}
+.small{font-size:13px;color:var(--muted)}
+.center{max-width:420px;margin:40px auto}
+.grid-3{display:flex;gap:8px}
+.stat{padding:12px;text-align:center}
+.stat-title{font-size:13px;color:var(--muted)}
+.stat-value{font-size:20px;font-weight:700}
+table{width:100%;border-collapse:collapse}
+th,td{padding:8px;border:1px solid #eef6ff;text-align:left}
+.btn.small{padding:4px 6px;font-size:12px}
